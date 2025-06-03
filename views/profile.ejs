@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Profile</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f4f8; /* Light professional blue background */
+      color: #2b2b2b; /* Dark text for readability */
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+    .container {
+      width: 100%;
+      max-width: 800px; /* A4 width in pixels */
+      background-color: white;
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+    h1, h2, h3 {
+      color: #005a9c; /* Professional blue for headings */
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .jobs-list {
+      margin-top: 20px;
+    }
+    .job-item {
+      padding: 15px;
+      border: 1px solid #005a9c; /* Professional blue border */
+      margin-bottom: 10px;
+      border-radius: 5px;
+      background-color: #f9f9f9; /* Light gray background */
+      text-align: left;
+    }
+    .job-item strong {
+      font-size: 1.2em;
+      color: #005a9c; /* Professional blue for emphasis */
+    }
+    .job-item p {
+      margin: 10px 0;
+      color: #2b2b2b; /* Dark text for readability */
+    }
+    .job-item small {
+      color: #666; /* Gray for secondary text */
+    }
+    button {
+      background-color: #0078d4; /* Professional blue button */
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #005a9c; /* Darker blue on hover */
+    }
+    form {
+      margin-top: 20px;
+      text-align: left;
+    }
+    label {
+      display: block;
+      margin-top: 15px;
+      font-size: 16px;
+      color: #005a9c; /* Professional blue for labels */
+    }
+    input[type="text"],
+    input[type="file"],
+    textarea {
+      width: calc(100% - 20px);
+      padding: 10px;
+      margin-top: 8px;
+      border: 1px solid #005a9c; /* Professional blue border */
+      border-radius: 5px;
+      background-color: #f9f9f9; /* Light gray background */
+      color: #2b2b2b; /* Dark text */
+      font-size: 14px;
+    }
+    input:focus,
+    textarea:focus {
+      outline: none;
+      border-color: #0078d4; /* Slightly lighter blue on focus */
+      box-shadow: 0 0 5px rgba(0, 90, 156, 0.5); /* Soft glow effect */
+    }
+    a {
+      color: #005a9c; /* Professional blue for links */
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    hr {
+      border: 0;
+      height: 1px;
+      background: #005a9c; /* Professional blue for horizontal lines */
+      margin: 20px 0;
+    }
+    /* Modal styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+    .modal-content {
+      background-color: white;
+      margin: 10% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+      max-width: 600px;
+      border-radius: 10px;
+    }
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .close:hover {
+      color: black;
+    }
+    .applicant-item {
+      margin-bottom: 20px;
+      padding: 15px;
+      border: 1px solid #005a9c;
+      border-radius: 5px;
+      background-color: #f9f9f9;
+    }
+    .applicant-item strong {
+      color: #005a9c;
+    }
+    /* Auto Apply Button Styles */
+    .auto-apply-container {
+      margin-top: 20px; /* Add some space above the button */
+      text-align: center; /* Center the button */
+    }
+    #auto-apply-button {
+      background-color: #0078d4; /* Professional blue button */
+      color: white;
+      border: none;
+      padding: 12px 24px; /* Slightly larger padding */
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      font-size: 1rem; /* Adjust font size */
+    }
+    #auto-apply-button:hover {
+      background-color: #005a9c; /* Darker blue on hover */
+      transform: translateY(-2px); /* Add a hover effect */
+    }
+</style>
+
+</head>
+<body>
+  <div class="container">
+    <h1>Welcome, <%= user.name %>!</h1>
+    <p>You are logged in as a <%= user.accountType %>.</p>
+
+    <% if (user.accountType === 'applicant') { %>
+      <!-- Resume Submission Form for Applicants -->
+      <h2>Submit Your Resume</h2>
+      <form action="/submit-resume" method="POST" enctype="multipart/form-data">
+        <label for="resume">Resume (PDF Format):</label><br>
+        <input type="file" id="resume" name="resume" accept="application/pdf" required><br><br>
+        <button type="submit">Submit Resume</button>
+      </form>
+    
+      <!-- Match Jobs Button -->
+      <h2>Match Jobs</h2>
+      <button id="match-jobs-button">Match Jobs</button>
+    
+      <!-- Predicted Jobs Section -->
+      <h2>Predicted Jobs:</h2>
+      <div id="predicted-jobs-list">
+        <p>Loading predicted jobs...</p>
+      </div>
+    
+      <!-- Recommended Jobs -->
+      <div class="jobs-list">
+        <h2>Recommended Jobs:</h2>
+        <div id="recommended-jobs">
+          <p>Click "Match Jobs" to see recommendations.</p>
+        </div>
+
+        <!-- Add the "Auto Apply" button container here -->
+        <div class="auto-apply-container">
+          <button id="auto-apply-button">Auto Apply</button>
+        </div>
+      </div>
+    <% } %>
+
+    <% if (user.accountType === 'company') { %>
+      <!-- Job Posting Form for Companies -->
+      <h2>Post a Job</h2>
+      <form action="/post-job" method="POST">
+        <label for="jobTitle">Job Title:</label><br>
+        <input type="text" id="jobTitle" name="jobTitle" required><br><br>
+        <label for="jobDescription">Job Description:</label><br>
+        <textarea id="jobDescription" name="jobDescription" rows="10" cols="50" required></textarea><br><br>
+        <button type="submit">Post Job</button>
+      </form>
+
+      <!-- Horizontal Line for Visual Separation -->
+      <hr>
+
+      <!-- Display Posted Jobs -->
+      <h3>Your Jobs</h3>
+      <ul>
+        <% if (user.jobs && user.jobs.length > 0) { %>
+          <% user.jobs.forEach((job, index) => { %>
+            <li class="job-item">
+              <strong><%= job.jobTitle %></strong>
+              <p><%= job.jobDescription %></p>
+              <small>Number of Applicants: <%= job.applicants ? job.applicants.length : 0 %></small><br>
+              <% if (job.applicants && job.applicants.length > 0) { %>
+                <button onclick="viewApplicants('<%= job._id %>')">View Applicants</button>
+              <% } %>
+              <button onclick="deleteJob('<%= job._id %>')">Delete</button>
+            </li>
+          <% }) %>
+        <% } else { %>
+          <p>No jobs posted yet.</p>
+        <% } %>
+      </ul>
+    <% } %>
+
+    <br>
+    <a href="/logout">Logout</a>
+  </div>
+
+  <!-- Modal for displaying applicants -->
+  <div id="applicantsModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>Applicants</h2>
+      <div id="applicantsList"></div>
+    </div>
+  </div>
+
+  <script>
+    // Fetch predicted jobs from the backend API
+    function fetchPredictedJobs() {
+      const jobsContainer = document.getElementById('predicted-jobs-list');
+      if (!jobsContainer) {
+        console.error('Error: predicted-jobs-list element not found');
+        return;
+      }
+
+      // Show loading indicator
+      jobsContainer.innerHTML = '<p>Loading...</p>';
+
+      fetch('/api/predicted-jobs', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include', // Include cookies for authentication
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then((data) => {
+          jobsContainer.innerHTML = ''; // Clear previous content
+
+          if (data.predictedJobs && data.predictedJobs.length > 0) {
+            const jobsList = document.createElement('ul');
+            data.predictedJobs.forEach((job) => {
+              const jobItem = document.createElement('li');
+              jobItem.className = 'job-item';
+              jobItem.innerHTML = `
+                <strong>${job.category}</strong> 
+              `;
+              jobsList.appendChild(jobItem);
+            });
+            jobsContainer.appendChild(jobsList);
+          } else {
+            jobsContainer.innerHTML = '<p>No predicted jobs found.</p>';
+          }
+        })
+        .catch((error) => {
+          console.error('Error fetching predicted jobs:', error);
+          jobsContainer.innerHTML = '<p>Failed to load predicted jobs. Please try again later.</p>';
+        });
+    }
+
+    // Fetch predicted jobs when the page loads
+    fetchPredictedJobs();
+
+    // Add event listener to the "Match Jobs" button
+    document.getElementById('match-jobs-button')?.addEventListener('click', () => {
+      console.log('Match Jobs button clicked'); // Log button click
+
+      const jobsContainer = document.getElementById('recommended-jobs');
+      if (!jobsContainer) {
+        console.error('Error: recommended-jobs element not found');
+        return;
+      }
+
+      // Show loading indicator
+      jobsContainer.innerHTML = '<p>Loading...</p>';
+      console.log('Loading indicator shown'); // Log loading indicator
+
+      fetch('/match-jobs', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+        .then((response) => {
+          console.log('Fetch response received'); // Log fetch response
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then((data) => {
+          console.log('Response data from backend:', data); // Log the response data
+          jobsContainer.innerHTML = ''; // Clear previous content
+
+          if (data && data.rankedJobs && data.rankedJobs.length > 0) { // Check for rankedJobs array
+            console.log('Number of jobs received:', data.rankedJobs.length); // Log number of jobs
+            data.rankedJobs.forEach((job) => {
+              const jobElement = document.createElement('div');
+              jobElement.className = 'job-item';
+              jobElement.innerHTML = `
+                <strong>Job Title: ${job["Job Title"]}</strong><br>
+                <p>${job["Job Description"]}</p>
+              `;
+              jobsContainer.appendChild(jobElement);
+            });
+          } else {
+            console.log('No jobs found in response'); // Log no jobs found
+            jobsContainer.innerHTML = '<p>No recommended jobs found.</p>';
+          }
+        })
+        .catch((error) => {
+          console.error('Error fetching recommended jobs:', error); // Log fetch error
+          jobsContainer.innerHTML = '<p>Failed to load recommended jobs. Please try again later.</p>';
+        });
+    });
+
+    // Function to auto-apply for all jobs
+    document.getElementById('auto-apply-button')?.addEventListener('click', async () => {
+      const jobsContainer = document.getElementById('recommended-jobs');
+      if (!jobsContainer) {
+        console.error('Error: recommended-jobs element not found');
+        return;
+      }
+
+      const jobs = jobsContainer.querySelectorAll('.job-item');
+      if (jobs.length === 0) {
+        alert('No jobs to apply for.');
+        return;
+      }
+
+      const resumeFile = document.getElementById('resume').files[0]; // Get the uploaded resume file
+      if (!resumeFile) {
+        alert('Please upload your resume before applying.');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('resume', resumeFile);
+
+      try {
+        const response = await fetch('/apply', {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          alert(`Auto-apply successful! Applied to ${result.applications.length} jobs.`);
+          console.log('Auto-apply results:', result.applications);
+        } else {
+          alert('Failed to auto-apply. Please try again.');
+        }
+      } catch (error) {
+        console.error('Error during auto-apply:', error);
+        alert('An error occurred during auto-apply.');
+      }
+    });
+
+    // Function to delete a job
+    async function deleteJob(jobId) {
+      if (confirm('Are you sure you want to delete this job?')) {
+        try {
+          const response = await fetch(`/delete-job/${jobId}`, {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
+
+          if (response.ok) {
+            alert('Job deleted successfully');
+            window.location.reload(); // Refresh the page to reflect changes
+          } else {
+            alert('Failed to delete job');
+          }
+        } catch (error) {
+          console.error('Error:', error);
+          alert('An error occurred while deleting the job');
+        }
+      }
+    }
+
+    // Function to view applicants for a job
+    function viewApplicants(jobId) {
+      fetch(`/get-applicants/${jobId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then((data) => {
+          if (data.applicants && data.applicants.length > 0) {
+            // Display the applicants in the modal
+            const applicantsList = document.getElementById('applicantsList');
+            applicantsList.innerHTML = data.applicants
+              .map(
+                (applicant) => `
+                  <div class="applicant-item">
+                    <strong>Name:</strong> ${applicant.name}<br>
+                    <strong>Email:</strong> ${applicant.email}<br>
+                    <strong>Summary:</strong> ${applicant.summary}<br>
+                    <hr>
+                  </div>
+                `
+              )
+              .join('');
+
+            // Show the modal
+            const modal = document.getElementById('applicantsModal');
+            modal.style.display = 'block';
+          } else {
+            alert('No applicants found for this job.');
+          }
+        })
+        .catch((error) => {
+          console.error('Error fetching applicants:', error);
+          alert('Failed to fetch applicants. Please try again later.');
+        });
+    }
+
+    // Close the modal when the user clicks the close button
+    const modal = document.getElementById('applicantsModal');
+    const closeButton = document.querySelector('.close');
+    closeButton.onclick = () => {
+      modal.style.display = 'none';
+    };
+
+    // Close the modal when the user clicks outside of it
+    window.onclick = (event) => {
+      if (event.target === modal) {
+        modal.style.display = 'none';
+      }
+    };
+  </script>
+</body>
+</html>

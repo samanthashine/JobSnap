@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Login</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      height: 100vh;
+      background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcROwWiSIR7B0i7c_4PCaTdxFdneJ_X21i7aXQ&s'); /* Background image */
+      background-size: cover;
+      background-position: center;
+    }
+
+    .left-side {
+      flex: 0.3; /* 30% width */
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background-color: rgba(0, 102, 204, 0.8); /* Semi-transparent blue */
+      color: white;
+    }
+
+    .left-side button {
+      background: none;
+      border: 2px solid white;
+      color: white;
+      padding: 15px 30px;
+      margin: 10px;
+      border-radius: 5px;
+      font-size: 18px;
+      cursor: pointer;
+      transition: background 0.3s ease, color 0.3s ease;
+      width: 80%; /* Make buttons wider */
+      text-align: center;
+    }
+
+    .left-side button:hover {
+      background: white;
+      color: #0066cc;
+    }
+
+    .left-side button.active {
+      background: white;
+      color: #0066cc;
+      border: 2px solid #0066cc;
+    }
+
+    .right-side {
+      flex: 0.7; /* 70% width */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white */
+    }
+
+    .login-panel {
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+      max-width: 350px;
+      width: 100%;
+      text-align: left;
+    }
+
+    h1 {
+      color: #0066cc; /* Blue for headings */
+      font-size: 2em;
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-size: 16px;
+      color: #333; /* Darker text for labels */
+    }
+
+    input {
+      width: calc(100% - 20px);
+      padding: 10px;
+      margin-top: 8px;
+      border: 1px solid #0066cc;
+      border-radius: 5px;
+      background: #f9f9f9;
+      color: #333;
+      font-size: 14px;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #004080;
+      box-shadow: 0 0 5px rgba(0, 102, 204, 0.5);
+    }
+
+    button[type="submit"] {
+      background: #0066cc;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      margin-top: 25px;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      width: 100%;
+      transition: background 0.3s ease;
+    }
+
+    button[type="submit"]:hover {
+      background: #004080;
+    }
+
+    a {
+      color: #0066cc;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    p {
+      margin-top: 20px;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <!-- Left Side -->
+  <div class="left-side">
+    <button class="active">Login</button> <!-- Login button with active state -->
+    <button onclick="window.location.href='/register'">Register</button>
+  </div>
+
+  <!-- Right Side -->
+  <div class="right-side">
+    <div class="login-panel">
+      <h1>Login</h1>
+      <form action="/login" method="POST">
+        <label>Email:</label>
+        <input type="email" name="email" required><br>
+        <label>Password:</label>
+        <input type="password" name="password" required><br>
+        <button type="submit">Login</button>
+      </form>
+      <p>Don't have an account? <a href="/register">Register</a></p>
+    </div>
+  </div>
+</body>
+</html>
